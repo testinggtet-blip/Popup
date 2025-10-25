@@ -1,5 +1,5 @@
 import React from 'react';
-import { Type, Square, Image, MessageSquare } from 'lucide-react';
+import { Type, Square, Image, MessageSquare, Star, Clock, BarChart3 } from 'lucide-react';
 import { usePopup } from '../contexts/PopupContext';
 
 export const ComponentLibrary: React.FC = () => {
@@ -29,6 +29,24 @@ export const ComponentLibrary: React.FC = () => {
       name: 'Input Field',
       icon: MessageSquare,
       description: 'Email and text inputs'
+    },
+    {
+      type: 'star',
+      name: 'Star Rating',
+      icon: Star,
+      description: 'Interactive star ratings'
+    },
+    {
+      type: 'timer',
+      name: 'Countdown Timer',
+      icon: Clock,
+      description: 'Urgency countdown timers'
+    },
+    {
+      type: 'scale',
+      name: 'Rating Scale',
+      icon: BarChart3,
+      description: 'Numeric rating scales'
     }
   ];
 
@@ -87,6 +105,50 @@ export const ComponentLibrary: React.FC = () => {
             border: '1px solid #d1d5db',
             borderRadius: '8px',
             width: '100%'
+          }
+        };
+        break;
+      case 'star':
+        element = {
+          ...baseElement,
+          content: '5',
+          style: {
+            rating: 0,
+            maxRating: 5,
+            starColor: '#d1d5db',
+            activeColor: '#fbbf24',
+            fontSize: '24px'
+          }
+        };
+        break;
+      case 'timer':
+        element = {
+          ...baseElement,
+          content: '300',
+          style: {
+            countdown: 300,
+            fontSize: '24px',
+            fontWeight: '700',
+            color: '#ef4444',
+            textAlign: 'center' as const,
+            padding: '16px',
+            backgroundColor: '#fef2f2',
+            borderRadius: '8px',
+            border: '2px solid #fecaca'
+          }
+        };
+        break;
+      case 'scale':
+        element = {
+          ...baseElement,
+          content: '1-10',
+          style: {
+            scaleMin: 1,
+            scaleMax: 10,
+            scaleValue: 5,
+            fontSize: '14px',
+            color: '#374151',
+            textAlign: 'center' as const
           }
         };
         break;

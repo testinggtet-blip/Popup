@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface PopupElement {
   id: string;
-  type: 'text' | 'button' | 'image' | 'input' | 'container';
+  type: 'text' | 'button' | 'image' | 'input' | 'container' | 'star' | 'timer' | 'scale';
   content: string;
   style: {
     fontSize?: string;
@@ -16,6 +16,14 @@ export interface PopupElement {
     fontWeight?: string;
     width?: string;
     height?: string;
+    rating?: number;
+    maxRating?: number;
+    countdown?: number;
+    scaleMin?: number;
+    scaleMax?: number;
+    scaleValue?: number;
+    starColor?: string;
+    activeColor?: string;
   };
   position: { x: number; y: number };
 }
