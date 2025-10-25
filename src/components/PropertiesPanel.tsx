@@ -142,6 +142,123 @@ export const PropertiesPanel: React.FC = () => {
           </>
         )}
 
+        {selectedElement.type === 'star' && (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Max Rating</label>
+              <input
+                type="number"
+                value={selectedElement.style.maxRating || 5}
+                onChange={(e) => updateElement(selectedElement.id, { 
+                  style: { ...selectedElement.style, maxRating: parseInt(e.target.value) }
+                })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                min="1"
+                max="10"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Default Rating</label>
+              <input
+                type="number"
+                value={selectedElement.style.rating || 0}
+                onChange={(e) => updateElement(selectedElement.id, { 
+                  style: { ...selectedElement.style, rating: parseInt(e.target.value) }
+                })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                min="0"
+                max={selectedElement.style.maxRating || 5}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Active Star Color</label>
+              <input
+                type="color"
+                value={selectedElement.style.activeColor || '#fbbf24'}
+                onChange={(e) => updateElement(selectedElement.id, { 
+                  style: { ...selectedElement.style, activeColor: e.target.value }
+                })}
+                className="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Inactive Star Color</label>
+              <input
+                type="color"
+                value={selectedElement.style.starColor || '#d1d5db'}
+                onChange={(e) => updateElement(selectedElement.id, { 
+                  style: { ...selectedElement.style, starColor: e.target.value }
+                })}
+                className="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
+              />
+            </div>
+          </>
+        )}
+
+        {selectedElement.type === 'timer' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Countdown (seconds)</label>
+            <input
+              type="number"
+              value={selectedElement.style.countdown || parseInt(selectedElement.content) || 300}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                updateElement(selectedElement.id, { 
+                  content: value.toString(),
+                  style: { ...selectedElement.style, countdown: value }
+                });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              min="1"
+            />
+          </div>
+        )}
+
+        {selectedElement.type === 'scale' && (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Minimum Value</label>
+              <input
+                type="number"
+                value={selectedElement.style.scaleMin || 1}
+                onChange={(e) => updateElement(selectedElement.id, { 
+                  style: { ...selectedElement.style, scaleMin: parseInt(e.target.value) }
+                })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Maximum Value</label>
+              <input
+                type="number"
+                value={selectedElement.style.scaleMax || 10}
+                onChange={(e) => updateElement(selectedElement.id, { 
+                  style: { ...selectedElement.style, scaleMax: parseInt(e.target.value) }
+                })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Default Value</label>
+              <input
+                type="number"
+                value={selectedElement.style.scaleValue || 5}
+                onChange={(e) => updateElement(selectedElement.id, { 
+                  style: { ...selectedElement.style, scaleValue: parseInt(e.target.value) }
+                })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                min={selectedElement.style.scaleMin || 1}
+                max={selectedElement.style.scaleMax || 10}
+              />
+            </div>
+          </>
+        )}
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
           <input
