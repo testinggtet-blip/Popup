@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { FormConfig, FormField, FormData, ValidationResult, ConditionalRule, ValidationRule } from '../types/FormTypes';
+import { formService, SavedForm } from '../services/formService';
 
 interface FormContextType {
   currentForm: FormConfig;
   formData: FormData;
   validationResults: ValidationResult;
+  savedFormId: string | null;
+  isLoading: boolean;
   setCurrentForm: (form: FormConfig) => void;
   updateFormData: (fieldId: string, value: any) => void;
   addField: (field: FormField) => void;
@@ -17,6 +20,9 @@ interface FormContextType {
   processConditionalRules: () => void;
   resetForm: () => void;
   submitForm: () => Promise<boolean>;
+  saveForm: () => Promise<boolean>;
+  loadForm: (formId: string) => Promise<boolean>;
+  publishForm: (isPublished: boolean) => Promise<boolean>;
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -41,6 +47,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     errors: {},
     warnings: {}
   });
+  const [savedFormId, setSavedFormId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateFormData = useCallback((fieldId: string, value: any) => {
     setFormData(prev => {
@@ -317,43 +325,118 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const submitForm = useCallback(async (): Promise<boolean> => {
     const validation = validateForm();
-    
+
     if (!validation.isValid) {
       return false;
     }
 
     try {
-      // Simulate form submission
-      console.log('Submitting form:', formData);
-      
-      // Here you would implement actual submission logic based on submitAction
+      if (savedFormId) {
+        const submission = await formService.submitForm(savedFormId, formData);
+
+        if (!submission) {
+          alert(currentForm.submitAction.errorMessage);
+          return false;
+        }
+      }
+
       switch (currentForm.submitAction.type) {
         case 'webhook':
-          // await fetch(currentForm.submitAction.endpoint, { method: 'POST', body: JSON.stringify(formData) });
-          break;
-        case 'email':
-          // Send email logic
+          if (currentForm.submitAction.endpoint) {
+            await fetch(currentForm.submitAction.endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formData)
+            });
+          }
           break;
         case 'redirect':
-          // window.location.href = currentForm.submitAction.redirectUrl;
+          if (currentForm.submitAction.redirectUrl) {
+            window.location.href = currentForm.submitAction.redirectUrl;
+          }
           break;
         case 'popup':
           alert(currentForm.submitAction.successMessage);
           break;
       }
-      
+
       return true;
     } catch (error) {
       console.error('Form submission error:', error);
+      alert(currentForm.submitAction.errorMessage);
       return false;
     }
-  }, [formData, validateForm, currentForm.submitAction]);
+  }, [formData, validateForm, currentForm.submitAction, savedFormId]);
+
+  const saveForm = useCallback(async (): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      if (savedFormId) {
+        const result = await formService.updateForm(savedFormId, currentForm);
+        setIsLoading(false);
+        return result !== null;
+      } else {
+        const result = await formService.createForm(currentForm);
+        if (result) {
+          setSavedFormId(result.id);
+          setCurrentForm(prev => ({ ...prev, id: result.id }));
+        }
+        setIsLoading(false);
+        return result !== null;
+      }
+    } catch (error) {
+      console.error('Error saving form:', error);
+      setIsLoading(false);
+      return false;
+    }
+  }, [currentForm, savedFormId]);
+
+  const loadForm = useCallback(async (formId: string): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      const savedForm = await formService.getForm(formId);
+      if (savedForm) {
+        const formConfig = formService.convertToFormConfig(savedForm);
+        setCurrentForm(formConfig);
+        setSavedFormId(savedForm.id);
+        setFormData({});
+        setIsLoading(false);
+        return true;
+      }
+      setIsLoading(false);
+      return false;
+    } catch (error) {
+      console.error('Error loading form:', error);
+      setIsLoading(false);
+      return false;
+    }
+  }, []);
+
+  const publishForm = useCallback(async (isPublished: boolean): Promise<boolean> => {
+    if (!savedFormId) {
+      const saved = await saveForm();
+      if (!saved || !savedFormId) return false;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await formService.publishForm(savedFormId!, isPublished);
+      setIsLoading(false);
+      return result;
+    } catch (error) {
+      console.error('Error publishing form:', error);
+      setIsLoading(false);
+      return false;
+    }
+  }, [savedFormId, saveForm]);
 
   return (
     <FormContext.Provider value={{
       currentForm,
       formData,
       validationResults,
+      savedFormId,
+      isLoading,
       setCurrentForm,
       updateFormData,
       addField,
@@ -365,7 +448,10 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       validateField,
       processConditionalRules,
       resetForm,
-      submitForm
+      submitForm,
+      saveForm,
+      loadForm,
+      publishForm
     }}>
       {children}
     </FormContext.Provider>
