@@ -42,7 +42,7 @@ export const FormBuilder: React.FC = () => {
               <Eye className="w-4 h-4" />
               Preview
             </button>
-            
+
             <button className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors font-medium">
               <Play className="w-4 h-4" />
               Test Form
@@ -83,13 +83,13 @@ export const FormBuilder: React.FC = () => {
           </div>
 
           {/* Canvas */}
-          <FormCanvas 
+          <FormCanvas
             selectedFieldId={selectedFieldId}
             onFieldSelect={setSelectedFieldId}
           />
 
           {/* Properties Panel */}
-          <FormPropertiesPanel 
+          <FormPropertiesPanel
             selectedFieldId={selectedFieldId}
             onFieldSelect={setSelectedFieldId}
           />
@@ -102,4 +102,4 @@ export const FormBuilder: React.FC = () => {
       </div>
     </FormProvider>
   );
-};</parameter>
+};

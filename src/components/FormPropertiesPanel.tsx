@@ -328,4 +328,4 @@ export const FormPropertiesPanel: React.FC<FormPropertiesPanelProps> = ({
       </div>
     </div>
   );
-};</parameter>
+};

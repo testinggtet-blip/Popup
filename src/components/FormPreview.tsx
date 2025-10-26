@@ -12,7 +12,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validation = validateForm();
     if (validation.isValid) {
       const success = await submitForm();
@@ -36,7 +36,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ onClose }) => {
         >
           <X className="w-4 h-4" />
         </button>
-        
+
         <div className="p-8">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">{currentForm.name}</h2>
@@ -84,4 +84,4 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ onClose }) => {
       </div>
     </div>
   );
-};</parameter>
+};

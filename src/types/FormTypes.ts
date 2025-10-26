@@ -70,4 +70,4 @@ export interface ValidationResult {
   isValid: boolean;
   errors: Record<string, string>;
   warnings: Record<string, string>;
-}</parameter>
+}
